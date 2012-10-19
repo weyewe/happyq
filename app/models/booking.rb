@@ -38,6 +38,16 @@ class Booking < ActiveRecord::Base
     return new_object
   end
   
+  
+  def self.active_bookings
+    
+    Booking.where{booking_status.not_in [
+        BOOKING_STATUS[:closed],
+        BOOKING_STATUS[:canceled]
+      ] }.order("created_at DESC")
+  end
+  
+  
   def is_international_format?( phone_number ) 
     if phone_number.nil? or phone_number.length ==0  
       return false 
@@ -88,15 +98,13 @@ class Booking < ActiveRecord::Base
   end
    
   
+  def mark_as_ready(employee)
+    self.booking_status = BOOKING_STATUS[:seat_ready]
+    self.save
+  end
+  
   def send_seat_ready_notification(employee)
-    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] ) 
-    if delivery.is_error == true 
-      self.booking_status = BOOKING_STATUS[:error_sending_seat_ready_notification]
-    else
-      self.booking_status = BOOKING_STATUS[:seat_ready]
-    end
-    self.save  
-    trigger_refresh_row(delivery)
+    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] )  
   end
   
   
@@ -112,16 +120,20 @@ class Booking < ActiveRecord::Base
   
   
   def close_booking(employee)
-    puts "*****************BOOKING IS CLOSED****************\n"*10
+    self.booking_status = BOOKING_STATUS[:closed]
+    self.save
   end
   
-  def cancel_booking(employee)
-    puts "*****************BOOKING IS CANCELED****************\n"*10
+  def cancel_booking(employee) 
+    self.booking_status = BOOKING_STATUS[:canceled]
+    self.save
   end
   
   
   def last_delivery
     self.deliveries.order("created_at DESC").first 
   end
+  
+  
    
 end

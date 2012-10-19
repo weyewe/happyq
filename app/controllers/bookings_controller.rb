@@ -1,6 +1,8 @@
 class BookingsController < ApplicationController
+  
+  
   def index
-    @objects = Booking.all
+    @objects = Booking.active_bookings
     @new_object = Booking.new 
     
     
@@ -13,7 +15,9 @@ class BookingsController < ApplicationController
   end
   
   def send_booking_ready_notification
+    
     @booking = Booking.find_by_id params[:entity_id]
+    @booking.mark_as_ready(current_user ) 
     @booking.delay.send_seat_ready_notification(current_user)
     @object = @booking
   end

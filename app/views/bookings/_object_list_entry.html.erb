@@ -32,13 +32,9 @@
   <td> 
     <% case object.booking_status %>
     <% when BOOKING_STATUS[:pending_confirmation_sms] %>
-      <span class="label">Confirming</span>  
-    <% when BOOKING_STATUS[:error_sending_confirmation] %>
-      <span class="label red">FAIL</span>
+      <span class="label">Confirming</span>   
     <% when BOOKING_STATUS[:pending_seat] %> 
-      <span class="label blue">Wait</span> 
-    <% when BOOKING_STATUS[:error_sending_seat_ready_notification] %> 
-      <span class="label blue">FAIL</span>
+      <span class="label blue">Wait</span>  
     <% when BOOKING_STATUS[:seat_ready] %> 
       <span class="label green">Ready</span> 
     <% when BOOKING_STATUS[:closed] %> 
