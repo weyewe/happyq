@@ -1,48 +1,25 @@
 <div class="padded">
   
-  
-    <%= render :partial => "layouts/new_object_opener", :locals => {
-      :text => "New Queue"
-    } %>
-  
-  
-   
-  <% if @objects.length == 0 %>
-    <%= render :partial => "layouts/no_object_list", :locals => {
-      :objects => "queues",
-      :single_object => "queue" , 
-      :subject => "company"
-    } %>
-  <% end %>
-   
-   
-    <%= render :partial => "bookings/new_object_form", :locals => {
-      :new_object => @new_object,
-      :url => bookings_url   
-    }%>
- 
- 
+    
  
   
   
   
     
-    <table class="table table-bordered table-striped table-header <%= show_table?( @objects )%>" id="object_list">
+    <table class="table table-bordered table-striped table-header" id="object_list">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Phone</th>
+          <th>Name</th> 
           <th>Seat</th>
           <th>Quantity</th>
-          <th>Time</th>
-          <th>Code</th> 
-          <th>Status</th> 
-          <th colspan='3' style='text-align:center;'>Action</th> 
+          <th>Time</th> 
+          <th>Code</th>
+          <th>Status</th>  
         </tr>
       </thead>
       <tbody id="package_list">
         <% @objects.each do |object| %>
-          <%= render :partial => "bookings/object_list_entry", :locals => {
+          <%= render :partial => "bookings/public_object_list_entry", :locals => {
             :object => object 
           }%>
         
@@ -62,16 +39,17 @@
 <script type="text/javascript">
   $(document).ready(function(){
     var pusher = new Pusher('<%= Pusher.key %> '); // Replace with your app key
-    var channel = pusher.subscribe('<%= current_office.channel_code %>');
+    var channel = pusher.subscribe('<%= Office.first.channel_code %>');
     
     channel.bind('refresh_row', function(pusher_data) {
       var $row = $("#object_list_entry-" + pusher_data.object_id ); 
+      
       if($row.length != 0 ){
         $row.showLoading(); 
-      }
+      } 
       
       $.ajax({
-        url: '<%= refresh_booking_queue_row_url %>' ,
+        url: '<%= refresh_public_booking_queue_row_url %>' ,
         type: "POST",
         data: pusher_data,
         dataType: 'script',

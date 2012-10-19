@@ -13,6 +13,18 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def deduce_after_sign_in_url 
+    
+    
+    return destroy_user_session_url
+  end
+  
+  def after_sign_in_path_for(resource)
+    return bookings_url  
+  end
+  
+  
+  
   
   def current_office
     if @office.nil?

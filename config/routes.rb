@@ -4,7 +4,7 @@ Projectcamp::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  root to: "bookings#index"
+  root to: "bookings#public_index"
   resources :bookings 
 
   resources :pages, only: [:show, :index]
@@ -18,6 +18,8 @@ Projectcamp::Application.routes.draw do
   match 'cancel_booking' => 'bookings#cancel_booking', :as => :cancel_booking, :method => :post 
   
   match 'refresh_booking_queue_row' => 'bookings#refresh_booking_queue_row', :as => :refresh_booking_queue_row, :method => :post 
+  match 'refresh_public_booking_queue_row' => 'bookings#refresh_public_booking_queue_row', :as => :refresh_public_booking_queue_row, :method => :post 
+  
   
   resources :projects   do
     resources :project_memberships 

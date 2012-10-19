@@ -1,6 +1,6 @@
 $(document).ready(function(){ 
   var $row = $("#object_list_entry-<%= @object.id %>");
-  <% new_row = escape_javascript(  render :partial => "bookings/object_list_entry", :locals => { 
+  <% new_row = escape_javascript(  render :partial => "bookings/public_object_list_entry", :locals => { 
     :object => @object
     }) %>
     
@@ -17,10 +17,8 @@ $(document).ready(function(){
       $("#package_list").prepend('<%= new_row %>');
     <% else %>
       $row.remove(); 
-    <% end %>
-    
-    
-    
+    <% end %> 
   }
     
 });
+ 

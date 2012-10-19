@@ -30,7 +30,9 @@ class Booking < ActiveRecord::Base
     if new_object.persisted? 
       new_object.generate_yday
       new_object.generate_booking_code 
-      new_object.delay.send_confirmation_sms(employee)
+      
+      new_object.delay.send_confirmation_sms(employee) 
+      new_object.trigger_refresh_row
       # do the after_create activities 
       # send the sms confirmation 
     end
@@ -41,7 +43,7 @@ class Booking < ActiveRecord::Base
   
   def self.active_bookings
     
-    Booking.where{booking_status.not_in [
+    Booking.where{ booking_status.not_in [
         BOOKING_STATUS[:closed],
         BOOKING_STATUS[:canceled]
       ] }.order("created_at DESC")
@@ -94,21 +96,18 @@ class Booking < ActiveRecord::Base
       self.booking_status = BOOKING_STATUS[:pending_seat]
     end
     self.save  
-    trigger_refresh_row(delivery)
+    trigger_refresh_row
   end
    
   
-  def mark_as_ready(employee)
-    self.booking_status = BOOKING_STATUS[:seat_ready]
-    self.save
-  end
+  
   
   def send_seat_ready_notification(employee)
     delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] )  
   end
   
   
-  def trigger_refresh_row(delivery)
+  def trigger_refresh_row 
     pusher_message = {:object_id => self.id  }  
     Pusher["#{self.office.channel_code}"].trigger('refresh_row', 
             pusher_message)
@@ -117,22 +116,37 @@ class Booking < ActiveRecord::Base
   FRONT GATE INTERACTION with the queue
 =end
 
+  def mark_as_ready(employee)
+    self.booking_status = BOOKING_STATUS[:seat_ready]
+    self.save
+    trigger_refresh_row
+  end
   
   
   def close_booking(employee)
     self.booking_status = BOOKING_STATUS[:closed]
     self.save
+    trigger_refresh_row
   end
   
   def cancel_booking(employee) 
     self.booking_status = BOOKING_STATUS[:canceled]
-    self.save
+    self.save 
+    self.trigger_refresh_row
   end
   
   
   def last_delivery
     self.deliveries.order("created_at DESC").first 
   end
+  
+  def is_active?
+    # not canceled or not not closed
+    self.booking_status != BOOKING_STATUS[:closed] && 
+      self.booking_status != BOOKING_STATUS[:canceled]
+  end
+  
+  
   
   
    

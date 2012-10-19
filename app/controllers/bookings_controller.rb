@@ -1,12 +1,19 @@
 class BookingsController < ApplicationController
   
-  
+  skip_before_filter :authenticate_user!, :only => [:public_index, :refresh_public_booking_queue_row]
   def index
     @objects = Booking.active_bookings
     @new_object = Booking.new 
     
     
     add_breadcrumb "Queue Management", 'bookings_url'
+  end
+  
+  def public_index
+    @objects = Booking.active_bookings
+    @new_object = Booking.new
+    
+    add_breadcrumb "Queue Management", 'root_url'
   end
   
   
@@ -35,5 +42,10 @@ class BookingsController < ApplicationController
   def refresh_booking_queue_row
     @object = Booking.find_by_id params[:object_id]
   end
+  
+  def refresh_public_booking_queue_row
+    @object = Booking.find_by_id params[:object_id]
+  end
+  
   
 end
