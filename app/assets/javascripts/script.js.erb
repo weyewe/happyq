@@ -309,6 +309,30 @@ $(document).ready(function(){
     
     return false; 
   });
+  
+   // specific on the booking
+  $(".variable_url_submit").live('click', function(){
+    var link_url = $(this).attr("href");
+    var $form = $("#form_submit_action form");
+    var $row = $(this).parents("tr.entry");
+    var entity_id = $row.attr("id").split("-")[1];
+    $("#entity_id").attr("value", entity_id );
+    
+    $row.showLoading(); 
+    $.ajax({
+      url: link_url,
+      type: "POST",
+      data: $form.serialize(),
+      dataType: 'script',
+      success: function(response){
+         $row.hideLoading();
+         $form.clearForm();
+      }
+    });
+    
+    return false;
+    
+  });
  
 });
 

@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user!
   
   layout :layout_by_resource
+  helper_method :current_office , :deduce_after_sign_in_url
+  
   def layout_by_resource
     if devise_controller? && resource_name == :user && action_name == 'new'
       "devise"
@@ -10,6 +12,19 @@ class ApplicationController < ActionController::Base
       "application"
     end
   end
+  
+  
+  def current_office
+    if @office.nil?
+      if current_user.nil?
+        return nil
+      end
+    
+      @office = current_user.office
+    end
+    
+    return @office
+  end 
   
   
   def set_breadcrumb_for object, destination_path, opening_words

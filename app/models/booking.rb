@@ -12,6 +12,7 @@ class Booking < ActiveRecord::Base
   def self.create_object( employee, object_params ) 
     new_object = self.new object_params  
     new_object.creator_id = employee.id 
+    new_object.office_id = employee.office_id
 
     # check that the phone number is the international format starts with +62
     if not new_object.is_international_format?( new_object.phone_number ) 
@@ -28,7 +29,7 @@ class Booking < ActiveRecord::Base
     if new_object.persisted? 
       new_object.generate_yday
       new_object.generate_booking_code 
-      new_object.send_confirmation_sms 
+      new_object.delay.send_confirmation_sms 
       # do the after_create activities 
       # send the sms confirmation 
     end
@@ -72,7 +73,37 @@ class Booking < ActiveRecord::Base
     Booking.where(:yday => yday , :year => year ) 
   end
   
+  # this method is always run in the backend
+  # PUSHER: use the channel as the filter.. not the event 
   def send_confirmation_sms
-    puts "SMS IS SENT"
+    Delivery.send_sms(self,  self.office.confirmation_sms_text( booking ) )  
+    
+    #   condition if sending is succesful
+    # condition if sending is fault 
+    # give different pusher output 
+    Pusher["#{self.office.channel_code}"].trigger('sms_confirmation_sent', 
+          {:message => "The object id: #{self.id} is sent"})
+  end
+  
+  def send_seat_ready_notification_sms
+    Delivery.send_sms(self,  self.office.seat_ready_sms_text( booking ) )    
+    Pusher["#{self.office.channel_code}"].trigger('seat_ready_sms_sent', 
+          {:message => "The object id: #{self.id} is sent"})
+  end
+  
+=begin
+  FRONT GATE INTERACTION with the queue
+=end
+
+  def send_table_ready_notification(employee)
+    puts "*****************TABLE READY IS SENT****************\n"*10
+  end
+  
+  def close_booking(employee)
+    puts "*****************BOOKING IS CLOSED****************\n"*10
+  end
+  
+  def cancel_booking(employee)
+    puts "*****************BOOKING IS CANCELED****************\n"*10
   end
 end

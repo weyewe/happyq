@@ -12,6 +12,11 @@ Projectcamp::Application.routes.draw do
   get "sessions/login", to: "sessions#login", as: :login
   get "sessions/register", to: "sessions#register", as: :register
   
+  
+  match 'send_booking_ready_notification' => 'bookings#send_table_ready_notification', :as => :send_booking_ready_notification, :method => :post 
+  match 'close_booking' => 'bookings#close_booking', :as => :close_booking, :method => :post 
+  match 'cancel_booking' => 'bookings#cancel_booking', :as => :cancel_booking, :method => :post 
+  
   resources :projects   do
     resources :project_memberships 
     resources :deliverable_items 

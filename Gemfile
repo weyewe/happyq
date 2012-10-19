@@ -19,6 +19,7 @@ gem 'acts_as_commentable_with_threading',
 gem 'awesome_print'
 
 gem 'kaminari'
+gem 'pusher'
 
 gem "squeel" 
 gem "timeline_fu"
@@ -26,6 +27,8 @@ gem "timeline_fu"
 # gem 'airbrake'
 gem 'heroku'
 gem 'exceptional'
+
+gem 'httparty'
 
 gem 'roadie', ">= 2.3.1"  # for sending email 
 

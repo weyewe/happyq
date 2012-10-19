@@ -1,3 +1,4 @@
+require 'pusher'
 Projectcamp::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -35,3 +36,7 @@ Projectcamp::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 end
+
+Pusher.app_id = '29935'
+Pusher.key    = '88e8aaabd179063044b0'
+Pusher.secret = '89d4bcdcf2e2eeeaa550'
