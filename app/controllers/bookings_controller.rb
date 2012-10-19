@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   def index
-    @objects = Booking.all
+    @objects = Booking.joins(:deliveries)
     @new_object = Booking.new 
     
     
@@ -25,6 +25,10 @@ class BookingsController < ApplicationController
   def cancel_booking
     @booking = Booking.find_by_id params[:entity_id]
     @booking.cancel_booking(current_user)
+  end
+  
+  def refresh_booking_queue_row
+    @object = Booking.find_by_id params[:object_id]
   end
   
 end

@@ -17,4 +17,19 @@ class Office < ActiveRecord::Base
     self.channel_code = channel_code.to_i.to_s(16)
     self.save 
   end
+  
+  def confirmation_sms_text( booking )
+    sms_string = ""
+    sms_string << "[#{self.name}] - #{booking.name}\n" 
+    sms_string <<  "BookingCode: #{booking.booking_code}\n" 
+    sms_string << "#{booking.seat_category.name}, " 
+    people_enumerator = ''
+    if booking.number_of_people > 1 
+      people_enumerator = 'people'
+    else
+      people_enumerator = 'person'
+    end
+    
+    sms_string << "#{booking.number_of_people}\n#{people_enumerator}" 
+  end
 end

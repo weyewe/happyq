@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(:version => 20121019053857) do
     t.integer  "creator_id"
     t.integer  "delivery_status", :default => 0
     t.boolean  "is_error",        :default => false
-    t.integer  "error_code"
+    t.integer  "response_code"
     t.integer  "delivery_case",   :default => 0
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false

@@ -26,9 +26,24 @@
   <td> 
     <%= object.booking_code %> 
   </td>
-  
+ 
+   
+   
   <td> 
-    Pending
+    <% case object.booking_status %>
+    <% when BOOKING_STATUS [:pending_confirmation_sms] %>
+      <span class="label">Confirm</span>  
+    <% when BOOKING_STATUS [:pending_seat] %> 
+      <span class="label blue">Wait</span> 
+    <% when BOOKING_STATUS [:seat_ready] %> 
+      <span class="label green">Wait</span> 
+    <% when BOOKING_STATUS [:closed] %> 
+      <span class="label yellow">Closed</span> 
+    <% when BOOKING_STATUS [:canceled] %> 
+      <span class="label red">Canceled</span>
+    <% else %>
+      <span class="label yellow">..</span>
+    <% end %>
   </td>
   
   <td> 

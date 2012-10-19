@@ -2,6 +2,7 @@ class Booking < ActiveRecord::Base
   attr_accessible :name, :phone_number, :seat_category_id, :number_of_people
   belongs_to :seat_category
   belongs_to :office 
+  has_many :deliveries 
 
   validates_presence_of :number_of_people, :seat_category_id, :name, :phone_number 
   validates_numericality_of :number_of_people 
@@ -29,7 +30,7 @@ class Booking < ActiveRecord::Base
     if new_object.persisted? 
       new_object.generate_yday
       new_object.generate_booking_code 
-      new_object.delay.send_confirmation_sms 
+      new_object.delay.send_confirmation_sms(employee)
       # do the after_create activities 
       # send the sms confirmation 
     end
@@ -75,22 +76,22 @@ class Booking < ActiveRecord::Base
   
   # this method is always run in the backend
   # PUSHER: use the channel as the filter.. not the event 
-  def send_confirmation_sms
-    Delivery.send_sms(self,  self.office.confirmation_sms_text( booking ) )  
-    
-    #   condition if sending is succesful
-    # condition if sending is fault 
-    # give different pusher output 
-    Pusher["#{self.office.channel_code}"].trigger('sms_confirmation_sent', 
-          {:message => "The object id: #{self.id} is sent"})
+  def send_confirmation_sms(employee)
+    delivery = Delivery.send_sms(employee , self,  self.office.confirmation_sms_text( self ), SMS_DELIVERY_CASE[:confirmation] )
+      
+    trigger_refresh_row(delivery)
   end
   
-  def send_seat_ready_notification_sms
-    Delivery.send_sms(self,  self.office.seat_ready_sms_text( booking ) )    
-    Pusher["#{self.office.channel_code}"].trigger('seat_ready_sms_sent', 
-          {:message => "The object id: #{self.id} is sent"})
-  end
+  def send_seat_ready_notification_sms(employee) 
+    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] ) 
+    trigger_refresh_row(delivery)
+  end 
   
+  def trigger_refresh_row(delivery)
+    pusher_message = {:object_id => self.id  }  
+    Pusher["#{self.office.channel_code}"].trigger('refresh_row', 
+            pusher_message)
+  end
 =begin
   FRONT GATE INTERACTION with the queue
 =end
@@ -106,4 +107,10 @@ class Booking < ActiveRecord::Base
   def cancel_booking(employee)
     puts "*****************BOOKING IS CANCELED****************\n"*10
   end
+  
+  
+  def last_delivery
+    self.deliveries.order("created_at DESC").first 
+  end
+   
 end

@@ -8,7 +8,7 @@ class CreateDeliveries < ActiveRecord::Migration
       t.integer :delivery_status , :default => SMS_DELIVERY_STATUS[:pending_trigger_send]
       
       t.boolean :is_error , :default => false 
-      t.integer :error_code 
+      t.integer :response_code  
       
       t.integer :delivery_case , :default => SMS_DELIVERY_CASE[:confirmation]
       
