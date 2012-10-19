@@ -20,9 +20,10 @@ class Office < ActiveRecord::Base
   
   def confirmation_sms_text( booking )
     sms_string = ""
-    sms_string << "[#{self.name}] - #{booking.name}\n" 
-    sms_string <<  "BookingCode: #{booking.booking_code}\n" 
-    sms_string << "#{booking.seat_category.name}, " 
+    sms_string << "[#{self.name}]-Confirmation\n"  
+    sms_string << "#{booking.name}\n" 
+    sms_string << "Code: #{booking.booking_code}\n" 
+    sms_string << "#{booking.seat_category.name}\n" 
     people_enumerator = ''
     if booking.number_of_people > 1 
       people_enumerator = 'people'
@@ -30,6 +31,22 @@ class Office < ActiveRecord::Base
       people_enumerator = 'person'
     end
     
-    sms_string << "#{booking.number_of_people}\n#{people_enumerator}" 
+    sms_string << "#{booking.number_of_people} #{people_enumerator}" 
+  end
+  
+  def seat_ready_sms_text(booking)
+    sms_string = ""
+    sms_string << "[#{self.name}]-Ready\n"  
+    sms_string << "#{booking.name}\n" 
+    sms_string << "Code: #{booking.booking_code}\n" 
+    sms_string << "#{booking.seat_category.name}\n" 
+    people_enumerator = ''
+    if booking.number_of_people > 1 
+      people_enumerator = 'people'
+    else
+      people_enumerator = 'person'
+    end
+    
+    sms_string << "#{booking.number_of_people} #{people_enumerator}"
   end
 end

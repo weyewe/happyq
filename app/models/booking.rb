@@ -78,14 +78,27 @@ class Booking < ActiveRecord::Base
   # PUSHER: use the channel as the filter.. not the event 
   def send_confirmation_sms(employee)
     delivery = Delivery.send_sms(employee , self,  self.office.confirmation_sms_text( self ), SMS_DELIVERY_CASE[:confirmation] )
-      
+    if delivery.is_error == true 
+      self.booking_status = BOOKING_STATUS[:error_sending_confirmation]
+    else
+      self.booking_status = BOOKING_STATUS[:pending_seat]
+    end
+    self.save  
+    trigger_refresh_row(delivery)
+  end
+   
+  
+  def send_seat_ready_notification(employee)
+    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] ) 
+    if delivery.is_error == true 
+      self.booking_status = BOOKING_STATUS[:error_sending_seat_ready_notification]
+    else
+      self.booking_status = BOOKING_STATUS[:seat_ready]
+    end
+    self.save  
     trigger_refresh_row(delivery)
   end
   
-  def send_seat_ready_notification_sms(employee) 
-    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] ) 
-    trigger_refresh_row(delivery)
-  end 
   
   def trigger_refresh_row(delivery)
     pusher_message = {:object_id => self.id  }  
@@ -96,9 +109,7 @@ class Booking < ActiveRecord::Base
   FRONT GATE INTERACTION with the queue
 =end
 
-  def send_table_ready_notification(employee)
-    puts "*****************TABLE READY IS SENT****************\n"*10
-  end
+  
   
   def close_booking(employee)
     puts "*****************BOOKING IS CLOSED****************\n"*10

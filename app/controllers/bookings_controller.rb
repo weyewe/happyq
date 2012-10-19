@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   def index
-    @objects = Booking.joins(:deliveries)
+    @objects = Booking.all
     @new_object = Booking.new 
     
     
@@ -12,9 +12,10 @@ class BookingsController < ApplicationController
     @new_object =  Booking.create_object( current_user, params[:booking])  
   end
   
-  def send_table_ready_notification
+  def send_booking_ready_notification
     @booking = Booking.find_by_id params[:entity_id]
-    @booking.send_table_ready_notification(current_user)
+    @booking.delay.send_seat_ready_notification(current_user)
+    @object = @booking
   end
   
   def close_booking
