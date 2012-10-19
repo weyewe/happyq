@@ -98,6 +98,7 @@ SHOW_NOTE = true
 
 
 BOOKING_STATUS = {
+  :pending_confirmation_sms => -1,  
   :pending_seat => 0, 
   :seat_ready => 1 , 
   :closed => 2, 
@@ -107,7 +108,8 @@ BOOKING_STATUS = {
 SMS_DELIVERY_STATUS=  {
   :pending_trigger_send => 0 ,
   :sent_not_confirmed => 1, 
-  :sent_confirmed => 2 
+  :sent_confirmed => 2,
+  :error => 3  
 }
 
 SMS_DELIVERY_CASE = {

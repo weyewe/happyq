@@ -4,7 +4,8 @@ Projectcamp::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  root to: "projects#index"
+  root to: "bookings#index"
+  resources :bookings 
 
   resources :pages, only: [:show, :index]
 

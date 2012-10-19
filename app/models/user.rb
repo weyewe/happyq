@@ -84,11 +84,8 @@ class User < ActiveRecord::Base
 =begin
   CREATE USER WITH ROLE 
 =end
-  def User.create_user_with_role( employee, role_list , user_params)
-    if not employee.has_role?(:admin)
-      puts "THE EMPLOYEE DOESN't HAVE ROLE ADMIN"
-      return nil
-    end
+  def User.create_user_with_role(   role_list , user_params)
+  
     
     user = User.create user_params 
     if user.errors.messages.length != 0 

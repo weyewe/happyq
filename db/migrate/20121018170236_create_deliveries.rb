@@ -1,7 +1,7 @@
 class CreateDeliveries < ActiveRecord::Migration
   def change
     create_table :deliveries do |t|
-      t.integer :booking_id 
+      t.integer :booking_id
       t.integer :office_id 
       t.integer :creator_id # the employee that triggers the delivery 
       

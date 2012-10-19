@@ -28,6 +28,8 @@ $(document).ready(function(){
     
     // if it is the edit mode 
     $("#display_content").toggle() ;
+    
+    $("#new_object").clearForm();
     return false;
   });
   
@@ -228,6 +230,7 @@ $(document).ready(function(){
     var component_status_id = id_text.split('-')[1];
     
     $("#component_status_nav_wrapper-"+component_status_id ).hide();
+    // $("#new_object" ).clearForm();
     $("#form_component_status-" +component_status_id ).show();
     
     return false;
