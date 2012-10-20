@@ -118,4 +118,4 @@ SMS_DELIVERY_CASE = {
   :confirmation => 0, 
   :seat_ready => 1 
 }
-
+ACTIVE_SMS_DELIVERY = false  

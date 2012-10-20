@@ -89,13 +89,18 @@ class Booking < ActiveRecord::Base
   # this method is always run in the backend
   # PUSHER: use the channel as the filter.. not the event 
   def send_confirmation_sms(employee)
-    delivery = Delivery.send_sms(employee , self,  self.office.confirmation_sms_text( self ), SMS_DELIVERY_CASE[:confirmation] )
-    if delivery.is_error == true 
-      self.booking_status = BOOKING_STATUS[:error_sending_confirmation]
+    if ACTIVE_SMS_DELIVERY == true 
+      delivery = Delivery.send_sms(employee , self,  self.office.confirmation_sms_text( self ), SMS_DELIVERY_CASE[:confirmation] )
+      if delivery.is_error == true 
+        self.booking_status = BOOKING_STATUS[:error_sending_confirmation]
+      else
+        self.booking_status = BOOKING_STATUS[:pending_seat]
+      end
+      
     else
       self.booking_status = BOOKING_STATUS[:pending_seat]
-    end
-    self.save  
+    end  
+    self.save
     trigger_refresh_row
   end
    
@@ -103,7 +108,9 @@ class Booking < ActiveRecord::Base
   
   
   def send_seat_ready_notification(employee)
-    delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] )  
+    if ACTIVE_SMS_DELIVERY == true 
+      delivery = Delivery.send_sms(employee , self, self.office.seat_ready_sms_text( self ) , SMS_DELIVERY_CASE[:seat_ready] )  
+    end
   end
   
   
