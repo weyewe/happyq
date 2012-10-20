@@ -36,47 +36,48 @@
 </div>
 
 <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
-<script type="text/javascript">
-  // $(document).ready(function(){
-  //   // Enable pusher logging - don't include this in production
-  //   
-  //   Pusher.log = function(message) {
-  //     if (window.console && window.console.log) window.console.log(message);
-  //   };
-  //   var pusher = new Pusher('<%= Pusher.key %> '); // Replace with your app key
-  //   var channel = pusher.subscribe('<%= Office.first.channel_code %>');
-  //       
-  //       channel.bind('refresh_row', function(pusher_data) {
-  //         var $row = $("#object_list_entry-" + pusher_data.object_id ); 
-  //         
-  //         if($row.length != 0 ){
-  //           $row.showLoading(); 
-  //         } 
-  //         
-  //         $.ajax({
-  //           url: '<%= refresh_public_booking_queue_row_url %>' ,
-  //           type: "POST",
-  //           data: pusher_data,
-  //           dataType: 'script',
-  //           success: function(response){ 
-  //           }
-  //         });
-  //       });
-  //   
-  //   var channel = pusher.subscribe('test_channel');
-  //     channel.bind('greet', function(data) {
-  //       alert(data.greeting);
-  //     });
-  //    
-  //   
-  // });
-</script>
+ 
 
 <script type="text/javascript">
-  alert("This is me");
+  var channel_code = '<%= Office.first.channel_code %>';
+  // alert("This is me, channel_code: " + channel_code);
+  Pusher.log = function(message) {
+    if (window.console && window.console.log) window.console.log(message);
+  };
   var pusher = new Pusher('<%= Pusher.key %>'); // uses your API KEY
-  var channel = pusher.subscribe('test_channel');
-  channel.bind('greet', function(data) {
-    alert(data.greeting);
+  
+  
+  var channel = pusher.subscribe(channel_code);
+  // channel.bind('greet', function(data) {
+  //   // alert(data.greeting);
+  //   awesomeShite();
+  // });
+  channel.bind('refresh_row', function(pusher_data) {
+    // alert("The row is refreshed");
+    refreshRow(pusher_data);
   });
+  
+  // alert("Gonna call the document ready");
+  
+  //   
+  // function awesomeShite(){
+  //   alert("awesome shite is called");
+  // }
+  // 
+  function refreshRow(pusher_data){
+    var $row = $("#object_list_entry-" + pusher_data.object_id ); 
+  
+    if($row.length != 0 ){
+      $row.showLoading(); 
+    } 
+  
+    $.ajax({
+      url: '<%= refresh_public_booking_queue_row_url %>' ,
+      type: "POST",
+      data: pusher_data,
+      dataType: 'script',
+      success: function(response){ 
+      }
+    }); 
+  }
 </script>

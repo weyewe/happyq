@@ -98,7 +98,7 @@ class Booking < ActiveRecord::Base
       end
       
     else
-      sleep(5);
+      sleep(2);
       self.booking_status = BOOKING_STATUS[:pending_seat]
     end  
     self.save
