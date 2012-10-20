@@ -13,9 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap
-//= require prettify
-//= require sidebar
-//= require docs
 //= require bootstrap-datepicker
 //= require jquery.showLoading.min
 //= require utility
