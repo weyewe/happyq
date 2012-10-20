@@ -49,12 +49,12 @@
     
 
     <div class="row wrapper"> 
-      <div class="span9 main-left"> 
+      <div class="span12 main-left"> 
         <%#= render :partial => "layouts/breadcrumb" %> 
         <%= create_breadcrumb(@breadcrumbs).html_safe %>
         <%= yield %>
       </div>
-      <%= render "layouts/sidebar" %> 
+      <%#= render "layouts/sidebar" %> 
     </div>
     
     
